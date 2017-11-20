@@ -6,7 +6,7 @@
 
 def main():
     try:
-        bestand = "alpaca_test.fa"
+        bestand = "alpaca.fna"
         headers, seqs = lees_inhoud(bestand)
     
         zoekwoord = input("Geef een zoekwoord op: ")
@@ -20,15 +20,14 @@ def main():
                 else:
                     print("Sequentie is geen DNA. Er is iets fout gegaan.")
     except FileNotFoundError:
-        print ("Het bestand kan niet gevonden worden. Zet een geldig fasta bestand in dezelfde map als waar u het programma vanuit draait en probeer het dan opnieuw." )
-        
-    
+        print("Het bestand kan niet gevonden worden. Zet een geldig fasta bestand in dezelfde map als waar u het programma vanuit draait en probeer het dan opnieuw.")
+    except UnicodeDecodeError:
+        print("Dit bestand is geen fasta bestand.")
+    except TypeError:
+        print("Het programma krijgt niet de verwachte input.")
 def lees_inhoud(bestands_naam):
-    
-    with open(bestands_naam) as bestandsnaam:
-            print(bestandsnaam)
-            print("nee")
-    
+
+    bestand = open(bestands_naam)
     headers = []
     seqs = []
     seq = ""
@@ -38,10 +37,10 @@ def lees_inhoud(bestands_naam):
             if seq != "":
                 seqs.append(seq)
                 seq = ""
-                headers.append(line)
-            else:
-                seq += line.strip()
-        seqs.append(seq)
+            headers.append(line)
+        else:
+            seq += line.strip()
+    seqs.append(seq)
     return headers, seqs
 
     
@@ -62,8 +61,26 @@ def knipt(alpaca_seq):
     for line in bestand:
         naam, seq = line.split(" ")
         seq = seq.strip().replace("^","")
-        if seq in alpaca_seq:
-            print(naam, "knipt in sequentie")
+
+    a = seq.count("A")
+    t = seq.count("T")
+    c = seq.count("C")
+    g = seq.count("G")
+    total = a + t + c + g
+    if total != len(seq):
+        raise TypeError
+    
+    a = alpaca_seq.count("A")
+    t = alpaca_seq.count("T")
+    c = alpaca_seq.count("C")
+    g = alpaca_seq.count("G")
+    total = a + t + c + g
+    if total != len(alpaca_seq):
+        raise TypeError
+
+        
+    if seq in alpaca_seq:
+        print(naam, "knipt in sequentie")
     
     
 
